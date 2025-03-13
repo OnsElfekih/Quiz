@@ -48,8 +48,7 @@ router.post("/register", async (req, res) => {
 // @desc Login user
 // @access Public
 router.post("/login", async (req, res) => {
-    const { username, password } = req.body;
-
+    const {username, password } = req.body;
     if (!username || !password) {
         return res.status(400).json({ error: "Please provide username and password" });
     }
@@ -68,14 +67,18 @@ router.post("/login", async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: user.id, role: user.role },
+            { id: user.id},
             config.get("jwtSecret"),
             { expiresIn: config.get("tokenExpire") }
         );
+
+        res.status(200).json({ token, role: user.role });
+
     } catch (err) {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 
 // @route GET api/users/all
 // @desc Get all users
