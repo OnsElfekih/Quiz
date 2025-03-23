@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const config = require("config");
 const cors = require("cors");
 const users=require("./routes/api/users");
+const quizs=require("./routes/api/quizs");
 
 const app = express();
 app.use(express.json());
@@ -15,6 +16,8 @@ mongoose
 .then(() => console.log("MongoDB connected..."))
 .catch((err) => console.log(err));
 app.use("/Users", users);
+app.use("/Quizs",quizs );
+
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => console.log(`Server running on port ${port}`));

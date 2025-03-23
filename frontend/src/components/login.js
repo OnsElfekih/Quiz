@@ -22,7 +22,15 @@ const handleSubmit = async (e) => {
     body: JSON.stringify(formData),
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Échec de la connexion");
+    if (!response.ok) {
+        if (data.message === "Nom d'utilisateur incorrect") {
+            throw new Error("Nom d'utilisateur incorrect");
+        } else if (data.message === "Mot de passe incorrect") {
+            throw new Error("Mot de passe incorrect");
+        } else {
+            throw new Error("Échec de la connexion");
+        }
+    }
 // Stockage du token et rôle dans les cookies
 Cookies.set("token", data.token, { expires: 1, secure: true, sameSite: "Strict" });
 Cookies.set("role", data.role, { expires: 1, secure: true, sameSite: "Strict" });
