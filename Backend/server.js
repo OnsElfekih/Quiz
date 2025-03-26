@@ -4,6 +4,7 @@ const config = require("config");
 const cors = require("cors");
 const users=require("./routes/api/users");
 const quizs=require("./routes/api/quizs");
+const questions=require("./routes/api/questions");
 
 const app = express();
 app.use(express.json());
@@ -17,6 +18,7 @@ mongoose
 .catch((err) => console.log(err));
 app.use("/Users", users);
 app.use("/Quizs",quizs );
+app.use("/Questions",questions)
 
 
 const port = process.env.PORT || 3001;
