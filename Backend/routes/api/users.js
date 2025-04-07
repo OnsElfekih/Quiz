@@ -2,8 +2,8 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const config = require("config");
 
-/* const jwt = require("jsonwebtoken");
-const authMiddleware = require("../../middleware/auth"); */
+const jwt = require("jsonwebtoken");
+/*const authMiddleware = require("../../middleware/auth"); */
 
 const User = require("../../models/User");
 
@@ -76,31 +76,34 @@ router.post("/register", async (req, res) => {
         if (!username || !password) {
             return res.status(400).json({ error: "Please provide username and password" });
         }
-
+    
         try {
             const user = await User.findOne({ username });
-
+    
             if (!user) {
                 return res.status(401).json({ error: "User not found" });
             }
-
+    
             const isMatch = await bcrypt.compare(password, user.password);
-
+            console.log(isMatch);  // Logs true or false
+    
             if (!isMatch) {
                 return res.status(401).json({ error: "Incorrect password" });
             }
-
+    
             const token = jwt.sign(
                 { id: user.id },
                 config.get("jwtSecret"),
                 { expiresIn: config.get("tokenExpire") }
             );
-
+            console.log("Generated token:", token);  // Log token for debugging
+            
             res.status(200).json({ token });
-
+    
         } catch (err) {
+            console.error("Error during login:", err);  // Log the error
             res.status(500).json({ error: "Internal server error" });
-        }
+        }        
     });
 
 

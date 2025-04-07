@@ -16,17 +16,25 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    // Client-side validation
+    if (!formData.username || !formData.password) {
+      setMessage("Les champs ne peuvent pas être vides.");
+      return;
+    }
+  
     try {
       const response = await axios.post(
         "http://localhost:3003/users/register",
         formData
       );
       setMessage(response.data.msg);
-      setFormData({ username: "", password: ""}); // Réinitialisation des champs
+      setFormData({ username: "", password: "" });
     } catch (error) {
       setMessage(error.response?.data?.msg || "Un erreur est survenue !");
     }
   };
+  
 
   return (
     <Box

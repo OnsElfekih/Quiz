@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
 import { TextField, Button, Box, Typography, CircularProgress } from "@mui/material";
-import jwt_decode from "jwt-decode";
 
 import LogoQuiz from './Icons/LogoQuiz.png';
 import user_icon from './Icons/user.png';
