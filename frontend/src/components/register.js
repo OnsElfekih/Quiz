@@ -18,13 +18,13 @@ const Register = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3001/users/register",
+        "http://localhost:3003/users/register",
         formData
       );
       setMessage(response.data.msg);
       setFormData({ username: "", password: ""}); // Réinitialisation des champs
     } catch (error) {
-      setMessage(error.response?.data?.msg || "Une erreur est survenue");
+      setMessage(error.response?.data?.msg || "Un erreur est survenue !");
     }
   };
 

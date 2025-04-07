@@ -22,6 +22,25 @@ const QuizSchema = new mongoose.Schema({
         default: Date.now, 
         required: true,
     },
+    pic: {
+        type: Buffer, // Store the image as binary data (Buffer)
+        required: false,
+    },
+    creator: {
+        type: mongoose.Schema.Types.ObjectId, // Reference to the User model
+        ref: 'User', 
+        required: true,
+    },
+    questions: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Question"
+        }
+      ],
+    creationDate: {
+        type: Date,
+        default: Date.now, 
+    }
 });
 
 const Quiz = mongoose.model('Quiz', QuizSchema);

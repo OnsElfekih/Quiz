@@ -1,0 +1,57 @@
+[{
+  "_id": {
+    "$oid": "67e35a20ca7066432f08a53c"
+  },
+  "text": "Quel est le langage utilisé pour le développement web ?",
+  "type": "SeuleReponse",
+  "temps": 30,
+  "reponses": [
+    {
+      "text": "JavaScript",
+      "valide": true,
+      "_id": {
+        "$oid": "67e35a20ca7066432f08a53d"
+      }
+    },
+    {
+      "text": "Python",
+      "valide": false,
+      "_id": {
+        "$oid": "67e35a20ca7066432f08a53e"
+      }
+    },
+    {
+      "text": "C++",
+      "valide": false,
+      "_id": {
+        "$oid": "67e35a20ca7066432f08a53f"
+      }
+    }
+  ],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e35a84ca7066432f08a549"
+  },
+  "text": "Le JavaScript est un langage côté client.",
+  "type": "VraiFaux",
+  "temps": 15,
+  "reponses": [
+    {
+      "text": "Vrai",
+      "valide": true,
+      "_id": {
+        "$oid": "67e35a84ca7066432f08a54a"
+      }
+    },
+    {
+      "text": "Faux",
+      "valide": false,
+      "_id": {
+        "$oid": "67e35a84ca7066432f08a54b"
+      }
+    }
+  ],
+  "__v": 0
+}]

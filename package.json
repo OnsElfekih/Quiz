@@ -1,0 +1,23 @@
+{
+  "name": "quiz",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OnsElfekih/Quiz.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OnsElfekih/Quiz/issues"
+  },
+  "homepage": "https://github.com/OnsElfekih/Quiz#readme",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.8.4"
+  }
+}

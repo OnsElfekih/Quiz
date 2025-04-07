@@ -1,0 +1,96 @@
+[{
+  "_id": {
+    "$oid": "67e2e21f38025cd9009807c2"
+  },
+  "text": "Paris",
+  "valide": false,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e2e21f38025cd9009807c4"
+  },
+  "text": "Rome",
+  "valide": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e2e21f38025cd9009807c6"
+  },
+  "text": "Berlin",
+  "valide": false,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e2e29338025cd9009807c9"
+  },
+  "text": "Paris",
+  "valide": false,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e2e29338025cd9009807cb"
+  },
+  "text": "Rome",
+  "valide": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e2e29338025cd9009807cd"
+  },
+  "text": "Berlin",
+  "valide": false,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e2e3029903ee84da1051e1"
+  },
+  "text": "Paris",
+  "valide": false,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e2e3029903ee84da1051e3"
+  },
+  "text": "Rome",
+  "valide": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e2e3029903ee84da1051e5"
+  },
+  "text": "Berlin",
+  "valide": false,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e2e3579903ee84da1051e7"
+  },
+  "text": "Paris",
+  "valide": false,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e2e3579903ee84da1051e9"
+  },
+  "text": "Rome",
+  "valide": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e2e3579903ee84da1051eb"
+  },
+  "text": "Berlin",
+  "valide": false,
+  "__v": 0
+}]

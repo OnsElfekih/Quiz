@@ -3,100 +3,142 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
 import { TextField, Button, Box, Typography, CircularProgress } from "@mui/material";
+import jwt_decode from "jwt-decode";
+
+import LogoQuiz from './Icons/LogoQuiz.png';
+import user_icon from './Icons/user.png';
+import password_icon from './Icons/password.png';
+
 const Login = () => {
-const [formData, setFormData] = useState({ username: "", password: "" });
-const [error, setError] = useState(null);
-const [loading, setLoading] = useState(false);
-const navigate = useNavigate(); // Pour rediriger après connexion
-const handleChange = (e) => {
-setFormData({ ...formData, [e.target.name]: e.target.value });
-};
-const handleSubmit = async (e) => {
+  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-    const response = await fetch("http://localhost:3001/users/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
-    });
-    const data = await response.json();
-    if (!response.ok) {
-        if (data.message === "Nom d'utilisateur incorrect") {
-            throw new Error("Nom d'utilisateur incorrect");
-        } else if (data.message === "Mot de passe incorrect") {
-            throw new Error("Mot de passe incorrect");
+      const response = await fetch("http://localhost:3003/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.error) {
+          throw new Error(data.error); // Utilise le champ "error" de la réponse
         } else {
-            throw new Error("Échec de la connexion");
+          throw new Error("Échec de la connexion");
         }
+      }
+
+      // Stocker le token
+      Cookies.set("token", data.token, { expires: 1, secure: true, sameSite: "Strict" });
+
+      // Décode le token pour extraire l'ID utilisateur
+      //const decodedToken = jwt_decode(data.token);
+      //console.log("User ID:", decodedToken.id);  
+
+      // Storer d'autres informations si nécessaire
+      //Cookies.set("username", formData.username, { expires: 1, secure: true, sameSite: "Strict" });
+      //Cookies.set("password", formData.password, { expires: 1, secure: true, sameSite: "Strict" });
+
+      navigate("/Dashboard");  // Redirection après la connexion
+    } catch (err) {
+      setError(`erreur est: ${err.message}`); // Afficher le message d'erreur
+    } finally {
+      setLoading(false);
     }
-// Stockage du token et rôle dans les cookies
-Cookies.set("token", data.token, { expires: 1, secure: true, sameSite: "Strict" });
-Cookies.set("role", data.role, { expires: 1, secure: true, sameSite: "Strict" });
-navigate("/home"); // Redirection après connexion
-} catch (err) {
-setError(err.message);
-} finally {
-setLoading(false);
-}
-};
-return (
+  };
+
+  return (
     <Box
-    sx={{
-    maxWidth: 400,
-    mx: "auto",
-    mt: 8,
-    p: 4,
-    boxShadow: 3,
-    borderRadius: 2,
-    backgroundColor: "white",
-    textAlign: "center",
-    }}
+      sx={{
+        maxWidth: 400,
+        mx: "auto",
+        mt: 8,
+        p: 4,
+        boxShadow: 3,
+        borderRadius: 2,
+        backgroundColor: "white",
+        textAlign: "center",
+      }}
     >
-    <Typography variant="h5" mb={2}>
-    Connexion
-    </Typography>
-    {error && <Typography color="error">{error}</Typography>}
-    <form onSubmit={handleSubmit}>
-<TextField
-fullWidth
-label="username"
-type="String"
-name="username"
-value={formData.username}
-onChange={handleChange}
-margin="normal"
-required
-/>
-<TextField
-fullWidth
-label="Mot de passe"
-type="password"
-name="password"
-value={formData.password}
-onChange={handleChange}
-margin="normal"
-required
-/>
-<Button
-type="submit"
-variant="contained"
-color="primary"
-fullWidth
-sx={{ mt: 2 }}
-disabled={loading}
->
-{loading ? <CircularProgress size={24} color="inherit" /> : "Se connecter"}
-</Button>
-</form>
-<Typography mt={2}>
-Pas encore de compte ?{" "}
-<Link to="/" style={{ color: "blue", textDecoration: "underline" }}>
-Inscrivez-vous ici
-</Link>
-</Typography>
-</Box>
-);
+      <div style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <img src={LogoQuiz} alt="Logo" style={{ width: '300px', height: '150px' }} />
+        <Typography variant="h5" mb={2}>
+          Connexion
+        </Typography>
+      </div>
+
+      {error && <Typography color="error">{error}</Typography>}
+
+      <form onSubmit={handleSubmit}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ marginRight: '20px' }}>
+            <img src={user_icon} alt="" />
+          </div>
+          <TextField
+            fullWidth
+            label="Username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ marginRight: '20px' }}>
+            <img src={password_icon} alt="" />
+          </div>
+          <TextField
+            fullWidth
+            label="Password"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+        </div>
+
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{
+            mt: 2,
+            background: 'linear-gradient(to right, #00aaff, #0044cc)', 
+            '&:hover': {
+              background: 'linear-gradient(to right, #0077cc, #0055aa)' 
+            }
+          }}
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Se connecter"}
+        </Button>
+      </form>
+
+      <Typography mt={2}>
+        Pas encore de compte ?{" "}
+        <Link to="/registre" style={{ color: "blue", textDecoration: "underline" }}>
+          Inscrivez-vous ici
+        </Link>
+      </Typography>
+    </Box>
+  );
 };
+
 export default Login;
