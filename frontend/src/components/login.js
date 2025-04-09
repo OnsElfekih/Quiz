@@ -28,35 +28,27 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
-        if (data.error) {
-          throw new Error(data.error); // Utilise le champ "error" de la réponse
-        } else {
-          throw new Error("Échec de la connexion");
-        }
+        throw new Error(data.error || "Échec de la connexion");
       }
-
-      // Stocker le token
+  
+      // Store the token and role in cookies
       Cookies.set("token", data.token, { expires: 1, secure: true, sameSite: "Strict" });
+      Cookies.set("role", data.role, { expires: 1, secure: true, sameSite: "Strict" });
+      Cookies.set("username", formData.username, { expires: 1, secure: true, sameSite: "Strict" });
 
-      // Décode le token pour extraire l'ID utilisateur
-      //const decodedToken = jwt_decode(data.token);
-      //console.log("User ID:", decodedToken.id);  
-
-      // Storer d'autres informations si nécessaire
-      //Cookies.set("username", formData.username, { expires: 1, secure: true, sameSite: "Strict" });
-      //Cookies.set("password", formData.password, { expires: 1, secure: true, sameSite: "Strict" });
-
-      navigate("/Dashboard");  // Redirection après la connexion
+  
+      navigate("/Dashboard");  // Redirect after login
     } catch (err) {
-      setError(`erreur est: ${err.message}`); // Afficher le message d'erreur
+      setError(`Erreur: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <Box

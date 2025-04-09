@@ -13,17 +13,32 @@ import Cookies from 'js-cookie';
 
 import QuizForm from './QuizForm';
 import Profile from './Profile';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
   const [questions, setQuestions] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if token exists in cookies
+    const token = Cookies.get("token");
+
+    if (!token) {
+      navigate("/login");  // Redirect to login if no token
+    }
+  }, [navigate]);
 
   const handleLogout = () => {
     Cookies.remove("token");
     Cookies.remove("role");
+    Cookies.remove("username"); // Supprimer le nom d'utilisateur lors de la déconnexion
     window.location.href = '/login';
   };
+  
+
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
@@ -32,6 +47,8 @@ const Dashboard = () => {
   const handleMenuClick = (page) => {
     setCurrentPage(page);
   };
+  const username = Cookies.get("username"); // Récupérer le nom d'utilisateur depuis les cookies
+
 
   const handleAddQuestion = () => {
     setQuestions([
@@ -111,6 +128,9 @@ const Dashboard = () => {
             <img src={addIcon} alt="Ajouter" style={{ width: 20, height: 20, marginRight: '8px' }} />
             Ajouter Quiz
           </Button>
+          <Typography variant="h6" sx={{ color: 'black' }}>
+              Bonjour, {username ? username : 'Utilisateur'} !
+            </Typography>
           <Button onClick={handleLogout} color="primary">Logout</Button>
         </Toolbar>
       </AppBar>
