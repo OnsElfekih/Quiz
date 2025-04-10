@@ -12,17 +12,14 @@ const reponses = require("./routes/api/reponses");
 const quizRoutes = require('./routes/api/quizroutes');
 
 const app = express();
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cors());
 app.use(bodyParser.json());
 
 
-app.use(cors({
-  origin: "http://localhost:3000",  
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type","Authorization"],
-}));
+
 
 // Connexion à MongoDB
 const mongo_url = "mongodb://localhost:27017/Projet"; 
@@ -32,7 +29,7 @@ mongoose.connect(mongo_url, {  })
 
 // Définir les routes API
 app.use("/users", users);
-app.use("/quizzes", quizzes);
+app.use("/quizs", quizzes);
 app.use("/questions", questions);
 app.use("/Typequestions", typequestions);
 app.use("/reponses", reponses);

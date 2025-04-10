@@ -8,6 +8,7 @@ const Question = require("../../models/Question");
 // @access Public
 
 router.post("/create", async (req, res) => {
+    console.log("eee")
     const quizData = req.body; // The data sent from the client
     console.log(quizData);
   

@@ -28,6 +28,7 @@ const QuizForm = () => {
 
   // Save the quiz
   const handleSaveQuiz = async () => {
+    
     // Collect quiz data
     const quizData = {
       titre: quizTitle,
@@ -41,6 +42,7 @@ const QuizForm = () => {
   
     // Send data to your backend
     try {
+     
       const response = await fetch('http://localhost:3003/quizs/create', {
         method: 'POST',
         headers: {
@@ -48,7 +50,7 @@ const QuizForm = () => {
         },
         body: JSON.stringify(quizData),
       });
-  
+      console.log("ok")
       const result = await response.json();
   
       if (result.status === 'ok') {
