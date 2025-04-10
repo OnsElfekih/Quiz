@@ -8,10 +8,11 @@ const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 
 
+
 // @route GET api/users/me
 // @desc Récupérer les infos de l'utilisateur connecté
 // @access Privé
-/* router.get("/me", authMiddleware, async (req, res) => {
+router.get("/me", authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
         if (!user) {
@@ -21,7 +22,9 @@ const User = require("../../models/User");
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur", error });
     }
-}); */
+});
+
+  
 
 
 // @route POST api/users/register
@@ -98,7 +101,7 @@ router.post("/register", async (req, res) => {
             );
             console.log("Generated token:", token);  // Log token for debugging
             
-            res.status(200).json({ token });
+            res.status(200).json({ user ,token});
     
         } catch (err) {
             console.error("Error during login:", err);  // Log the error

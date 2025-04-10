@@ -34,10 +34,10 @@ const Login = () => {
       if (!response.ok) {
         throw new Error(data.error || "Échec de la connexion");
       }
-  
+  console.log(data)
       // Store the token and role in cookies
       Cookies.set("token", data.token, { expires: 1, secure: true, sameSite: "Strict" });
-      Cookies.set("role", data.role, { expires: 1, secure: true, sameSite: "Strict" });
+      Cookies.set("id", data.user._id, { expires: 1, secure: true, sameSite: "Strict" });
       Cookies.set("username", formData.username, { expires: 1, secure: true, sameSite: "Strict" });
 
   
