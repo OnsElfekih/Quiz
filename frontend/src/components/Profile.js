@@ -10,25 +10,24 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const token = Cookies.get('token');
-      console.log("Contenu du token :", token);
-      console.log("Token length:", token?.length);
-      try {
-        const response = await axios.get('/api/users/me', {
-          headers: {
-            Authorization: `Bearer ${token}`, 
-          },
-        });
-        setUserData(response.data);
-      } catch (err) {
-        console.log('Full error object:', err);
-        console.error('Erreur lors de la récupération du profil :', err.response?.data || err.message);
-        setError('Erreur lors du chargement du profil.');
-      }
+        const token = Cookies.get('token');
+        console.log("Contenu du token :", token);
+        try {
+            const response = await axios.get('/api/users/me', {
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                },
+            });
+            setUserData(response.data);
+        } catch (err) {
+            console.error('Erreur lors de la récupération du profil :', err.response?.data || err.message);
+            setError('Erreur lors du chargement du profil.');
+        }
     };
     
     fetchUserProfile();
-  }, []);
+}, []);
+
   
   
 
