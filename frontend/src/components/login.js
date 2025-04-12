@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
 import { TextField, Button, Box, Typography, CircularProgress } from "@mui/material";
+import { useUser } from './UserContext'; // Correctly import useUser hook
 
 import LogoQuiz from './Icons/LogoQuiz.png';
 import user_icon from './Icons/user.png';
@@ -13,6 +14,9 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
+  // Use the useUser hook to get setUser function
+  const { setUser } = useUser();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,19 +32,23 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-  
+
       const data = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(data.error || "Échec de la connexion");
       }
-  console.log(data)
-      // Store the token and role in cookies
+
+      console.log(data);
+
+      // Store the token, id, and username in cookies
       Cookies.set("token", data.token, { expires: 1, secure: true, sameSite: "Strict" });
       Cookies.set("id", data.user._id, { expires: 1, secure: true, sameSite: "Strict" });
       Cookies.set("username", formData.username, { expires: 1, secure: true, sameSite: "Strict" });
 
-  
+      // Update the user context with the logged-in user's data
+      setUser(data.user); // Setting the user info to the global context
+      console.log(data.user);
       navigate("/Dashboard");  // Redirect after login
     } catch (err) {
       setError(`Erreur: ${err.message}`);
@@ -48,7 +56,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-  
 
   return (
     <Box

@@ -22,10 +22,7 @@ const QuizSchema = new mongoose.Schema({
         default: Date.now, 
         required: true,
     },
-    pic: {
-        type: Buffer, // Store the image as binary data (Buffer)
-        required: false,
-    },
+    
     creator: {
         type: mongoose.Schema.Types.ObjectId, // Reference to the User model
         ref: 'User', 

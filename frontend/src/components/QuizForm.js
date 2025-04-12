@@ -1,48 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Grid, Typography } from '@mui/material';
+import { AccessTime, Score, Person, AddCircleOutline } from '@mui/icons-material';
+import SaveIcon from '@mui/icons-material/Save';
+import { motion } from 'framer-motion';
+
+
 import Question from './Question';
 
-const QuizForm = () => {
+const QuizForm = ({ creator }) => {
   const [quizTitle, setQuizTitle] = useState('');
   const [questions, setQuestions] = useState([]);
-  const [image, setImage] = useState(null);
+  const [totalScore, setTotalScore] = useState(0);
+  const [totalTime, setTotalTime] = useState(0);
 
-  // Handler to upload the image
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(URL.createObjectURL(file));  // To display the image preview
-    }
-  };
+  useEffect(() => {
+    const score = questions.reduce((acc, q) => acc + (parseInt(q.score) || 0), 0);
+    const time = questions.reduce((acc, q) => acc + (parseInt(q.temps) || 0), 0);
+    setTotalScore(score);
+    setTotalTime(time);
+  }, [questions]);
 
-  // Add a new question to the quiz
   const handleAddQuestion = () => {
     setQuestions([...questions, {}]);
   };
 
-  // Remove a question from the quiz
   const handleRemoveQuestion = (index) => {
     const newQuestions = questions.filter((_, i) => i !== index);
     setQuestions(newQuestions);
   };
 
-  // Save the quiz
+  const handleQuestionChange = (index, updatedQuestion) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[index] = updatedQuestion;
+    setQuestions(updatedQuestions);
+  };
+
   const handleSaveQuiz = async () => {
-    
-    // Collect quiz data
+    // Prepare the quiz data
     const quizData = {
       titre: quizTitle,
-      image: image, // If sending the image as a URL or base64 string, you'll need to handle the upload and return the URL.
-      questions: questions.map((question, index) => ({
-        text: question.text, 
-        type: question.type, 
-        reponses: question.reponses, 
+      creator,  // Id of the creator (logged-in user)
+      questions: questions.map((question) => ({
+        text: question.text,
+        type: question.type,
+        reponses: question.reponses,
+        score: question.score,
+        temps: question.temps,
       })),
     };
-  
-    // Send data to your backend
+
+    console.log("Données envoyées :", JSON.stringify(quizData, null, 2));
+
     try {
-     
       const response = await fetch('http://localhost:3003/quizs/create', {
         method: 'POST',
         headers: {
@@ -50,9 +59,9 @@ const QuizForm = () => {
         },
         body: JSON.stringify(quizData),
       });
-      console.log("ok")
+
       const result = await response.json();
-  
+
       if (result.status === 'ok') {
         alert('Quiz enregistré avec succès!');
       } else {
@@ -60,13 +69,53 @@ const QuizForm = () => {
       }
     } catch (error) {
       console.error('Error saving quiz:', error);
-      alert('Une erreur est survenue lors de l\'enregistrement du quiz.');
+      alert("Une erreur est survenue lors de l'enregistrement du quiz.");
     }
   };
 
   return (
     <Box sx={{ padding: '20px', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Typography variant="h5" color="white" sx={{ marginBottom: '20px' }}>Créer un Quiz</Typography>
+
+      {/* Fixed info boxes */}
+      <Box sx={{
+        position: 'fixed',
+        top: '120px',
+        right: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1,
+        zIndex: 1000,
+      }}>
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+          <Box sx={{ backgroundColor: 'white', padding: 1, borderRadius: 2, textAlign: 'center', width: '120px' }}>
+            <Score color="primary" />
+            <Typography variant="subtitle2" color="textSecondary">Score Total</Typography>
+            <Typography variant="h6">{totalScore}</Typography>
+          </Box>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <Box sx={{ backgroundColor: 'white', padding: 1, borderRadius: 2, textAlign: 'center', width: '120px' }}>
+            <AccessTime color="primary" />
+            <Typography variant="subtitle2" color="textSecondary">Temps Total</Typography>
+            <Typography variant="h6">{totalTime} s</Typography>
+          </Box>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <Box sx={{ backgroundColor: 'white', padding: 1, borderRadius: 2, textAlign: 'center', width: '120px' }}>
+            <Person color="primary" />
+            <Typography variant="subtitle2" color="textSecondary">Créateur</Typography>
+            <Typography variant="h6">{creator}</Typography>
+          </Box>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <Box sx={{ backgroundColor: 'white', padding: 1, borderRadius: 2, textAlign: 'center', width: '120px' }}>
+            <AddCircleOutline color="primary" />
+            <Typography variant="subtitle2" color="textSecondary">Ajouter</Typography>
+            <Button onClick={handleAddQuestion} variant="contained" size="small" sx={{ mt: 1 }}>+ Question</Button>
+          </Box>
+        </motion.div>
+      </Box>
 
       {/* Quiz Title Field */}
       <Grid container spacing={2} sx={{ marginBottom: '20px' }}>
@@ -81,69 +130,10 @@ const QuizForm = () => {
             sx={{
               borderColor: 'white',
               '& .MuiOutlinedInput-root': {
-                borderColor: 'white', // White border
+                borderColor: 'white',
               },
             }}
           />
-        </Grid>
-      </Grid>
-
-      {/* Image Upload Field */}
-      <Grid container spacing={2} sx={{ marginBottom: '20px' }}>
-        <Grid item xs={12}>
-          <Button
-            variant="contained"
-            component="label"
-            sx={{
-              backgroundColor: '#00aaff',
-              borderRadius: '8px',
-              color: 'white',
-              marginBottom: '10px',
-              '&:hover': {
-                backgroundColor: '#0044cc',
-              },
-            }}
-          >
-            Télécharger une image
-            <input
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={handleImageChange}
-            />
-          </Button>
-
-          {/* Image Preview */}
-          {image && <img src={image} alt="Quiz" style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', marginBottom: '20px' }} />}
-        </Grid>
-      </Grid>
-
-      {/* Question Counter */}
-      <Grid container spacing={2} sx={{ marginBottom: '20px' }}>
-        <Grid item xs={12}>
-          <Typography variant="h6" color="white">
-            Nombre de Questions : {questions.length}
-          </Typography>
-        </Grid>
-      </Grid>
-
-      {/* Add Question Button */}
-      <Grid container spacing={2} sx={{ marginBottom: '20px' }}>
-        <Grid item xs={12}>
-          <Button
-            variant="contained"
-            onClick={handleAddQuestion}
-            sx={{
-              backgroundColor: '#00aaff',
-              borderRadius: '8px',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: '#0044cc',
-              },
-            }}
-          >
-            Ajouter une Question
-          </Button>
         </Grid>
       </Grid>
 
@@ -162,19 +152,32 @@ const QuizForm = () => {
           <Question
             index={index}
             removeQuestion={handleRemoveQuestion}
+            onChange={handleQuestionChange}
           />
         </Box>
       ))}
 
-      {/* Save Quiz Button at the bottom */}
-      <Box sx={{ marginTop: 'auto', textAlign: 'center' }}>
+      {/* Save Quiz Button */}
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          zIndex: 999,
+        }}
+      >
         <Button
           variant="contained"
           onClick={handleSaveQuiz}
+          startIcon={<SaveIcon />}
           sx={{
             backgroundColor: '#00aaff',
             borderRadius: '8px',
             color: 'white',
+            paddingX: '20px',
+            paddingY: '10px',
+            fontWeight: 'bold',
+            boxShadow: 3,
             '&:hover': {
               backgroundColor: '#0044cc',
             },

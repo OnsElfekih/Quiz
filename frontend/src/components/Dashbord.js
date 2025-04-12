@@ -10,7 +10,7 @@ import createIcon from './Icons/create.png'; // Icône de création de quiz
 import addIcon from './Icons/add.png'; // Icône de add quiz
 import searchIcon from './Icons/search.png'; // Icône de search quiz
 import Cookies from 'js-cookie';
-
+import {useUser } from './UserContext';
 import QuizForm from './QuizForm';
 import Profile from './Profile';
 import { useEffect } from 'react';
@@ -19,9 +19,9 @@ import { useNavigate } from 'react-router-dom';
 const Dashboard = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
-  const [questions, setQuestions] = useState([]);
+  //const [questions, setQuestions] = useState([]);
   const navigate = useNavigate();
-
+  const  user  = useUser();
   useEffect(() => {
     // Check if token exists in cookies
     const token = Cookies.get("token");
@@ -29,6 +29,7 @@ const Dashboard = () => {
     if (!token) {
       navigate("/login");  // Redirect to login if no token
     }
+    
   }, [navigate]);
 
   const handleLogout = () => {
@@ -50,7 +51,7 @@ const Dashboard = () => {
   const username = Cookies.get("username"); // Récupérer le nom d'utilisateur depuis les cookies
 
 
-  const handleAddQuestion = () => {
+  /* const handleAddQuestion = () => {
     setQuestions([
       ...questions,
       {
@@ -60,9 +61,9 @@ const Dashboard = () => {
         reponses: [{ text: '', valide: false }],
       }
     ]);
-  };
+  }; */
 
-  const handleQuestionChange = (index, field, value) => {
+  /* const handleQuestionChange = (index, field, value) => {
     const updatedQuestions = [...questions];
     updatedQuestions[index][field] = value;
     setQuestions(updatedQuestions);
@@ -73,7 +74,7 @@ const Dashboard = () => {
     updatedQuestions[questionIndex].reponses[responseIndex][field] = value;
     setQuestions(updatedQuestions);
   };
-
+ */
   return (
     <div style={{ background: 'linear-gradient(to bottom, #00aaff, #0044cc)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AppBar position="fixed" sx={{ top: 0, left: 0, right: 0, backgroundColor: 'white', boxShadow: 3 }}>
@@ -274,7 +275,7 @@ const Dashboard = () => {
           </Box>
         )}
 
-        {currentPage === 'create-quiz' && <QuizForm />}
+      {currentPage === 'create-quiz' && <QuizForm creator={username} />}
       </Container>
     </div>
   );

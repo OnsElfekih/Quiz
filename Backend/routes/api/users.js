@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const config = require("config");
 
 const jwt = require("jsonwebtoken");
-/*const authMiddleware = require("../../middleware/auth"); */
 
 const User = require("../../models/User");
 
@@ -12,7 +11,7 @@ const User = require("../../models/User");
 // @route GET api/users/me
 // @desc Récupérer les infos de l'utilisateur connecté
 // @access Privé
-router.get("/me", authMiddleware, async (req, res) => {
+router.get("/me", async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
         if (!user) {
@@ -137,6 +136,50 @@ router.post("/register", async (req, res) => {
         res.status(500).json({ message: 'Erreur lors de la récupération de l\'utilisateur', error });
         }
     });
+
+    // @route PUT api/users/:id/change-password
+    // @desc Changer le mot de passe de l'utilisateur
+    // @access Privé
+    router.put("/:id/change-password", async (req, res) => {
+        const { oldPassword, newPassword } = req.body;
+        const { id } = req.params;
+        console.log("it is working !",id, oldPassword, newPassword);
+
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({ message: "Les deux mots de passe sont requis" });
+        }
+    
+        try {
+            // Récupérer l'utilisateur
+            const user = await User.findById(id);
+            
+            if (!user) {
+                return res.status(404).json({ message: "Utilisateur non trouvé" });
+            }
+    
+            // Comparer l'ancien mot de passe avec celui dans la base de données
+            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: "L'ancien mot de passe est incorrect" });
+            }
+    
+            // Hasher le nouveau mot de passe
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(newPassword, salt);
+    
+            // Mettre à jour le mot de passe de l'utilisateur
+            user.password = hashedPassword;
+            await user.save();
+    
+            res.status(200).json({ message: "Mot de passe mis à jour avec succès" });
+        } catch (error) {
+            console.error("Erreur lors du changement de mot de passe:", error);
+            res.status(500).json({ message: "Erreur serveur", error: error.message });
+        }
+    });
+    
+
+
 
     // Mettre à jour un utilisateur par ID (UPDATE)
     router.put('/:id', async (req, res) => {

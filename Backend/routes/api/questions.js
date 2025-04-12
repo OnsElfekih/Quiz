@@ -5,7 +5,22 @@ const Question = require("../../models/Question");
 // Ajouter une question
 router.post("/add", async (req, res) => {
     try {
-        const nouvelleQuestion = new Question(req.body);
+        const { text, type, reponses, score, temps } = req.body;
+
+        // Vérification si tous les champs nécessaires sont présents
+        if (!text || !type || !score || !Array.isArray(reponses)) {
+            return res.status(400).json({ message: "Les champs nécessaires sont manquants." });
+        }
+
+        // Créer la nouvelle question avec score
+        const nouvelleQuestion = new Question({
+            text,
+            type,
+            reponses,
+            score,  // Inclure le champ score
+            temps
+        });
+
         await nouvelleQuestion.save();
         res.status(201).json(nouvelleQuestion);
     } catch (error) {
