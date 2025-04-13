@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useUser } from './UserContext';
+
+
 import { TextField, Button, Box, Grid, Typography } from '@mui/material';
 import { AccessTime, Score, Person, AddCircleOutline } from '@mui/icons-material';
 import SaveIcon from '@mui/icons-material/Save';
@@ -12,7 +15,7 @@ const QuizForm = ({ creator }) => {
   const [questions, setQuestions] = useState([]);
   const [totalScore, setTotalScore] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
-
+  const user = useUser();
   useEffect(() => {
     const score = questions.reduce((acc, q) => acc + (parseInt(q.score) || 0), 0);
     const time = questions.reduce((acc, q) => acc + (parseInt(q.temps) || 0), 0);
@@ -36,10 +39,12 @@ const QuizForm = ({ creator }) => {
   };
 
   const handleSaveQuiz = async () => {
-    // Prepare the quiz data
     const quizData = {
       titre: quizTitle,
-      creator,  // Id of the creator (logged-in user)
+      nbQuestions: questions.length,
+      creator: user.user._id,
+      time: totalTime,
+      score: totalScore,
       questions: questions.map((question) => ({
         text: question.text,
         type: question.type,
@@ -47,10 +52,11 @@ const QuizForm = ({ creator }) => {
         score: question.score,
         temps: question.temps,
       })),
+      creationDate: Date.now(),
     };
-
-    console.log("Données envoyées :", JSON.stringify(quizData, null, 2));
-
+  
+    console.log("Données envoyées QuizForm:", JSON.stringify(quizData,null,2));
+  
     try {
       const response = await fetch('http://localhost:3003/quizs/create', {
         method: 'POST',
@@ -59,19 +65,20 @@ const QuizForm = ({ creator }) => {
         },
         body: JSON.stringify(quizData),
       });
-
+  
       const result = await response.json();
-
-      if (result.status === 'ok') {
+  
+      if (response.ok) {
         alert('Quiz enregistré avec succès!');
       } else {
-        alert(`Erreur: ${result.msg}`);
+        alert(`Erreur: ${result.message || 'Erreur inconnue'}`);
       }
     } catch (error) {
       console.error('Error saving quiz:', error);
       alert("Une erreur est survenue lors de l'enregistrement du quiz.");
     }
   };
+  
 
   return (
     <Box sx={{ padding: '20px', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

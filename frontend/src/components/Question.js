@@ -12,12 +12,31 @@ const Question = ({ index, removeQuestion, onChange }) => {
     { text: '', isCorrect: false }
   ]);
   const [correctAnswer, setCorrectAnswer] = useState('');
-  const [temps, setTemps] = useState(10); // Temps par défaut : 10 secondes
-  const [score, setScore] = useState(10);  // Score par défaut
+  const [temps, setTemps] = useState(10);
+  const [score, setScore] = useState(10);
 
-  // Mettre à jour le parent via onChange chaque fois qu'une modification se produit
+  // Mettre à jour les réponses pour VraiFaux ou les types texte
   useEffect(() => {
-    // Appeler la fonction onChange du parent pour transmettre les valeurs
+    if (questionType === 'VraiFaux') {
+      const updatedAnswers = [
+        { text: 'Vrai', isCorrect: correctAnswer === 'Vrai' },
+        { text: 'Faux', isCorrect: correctAnswer === 'Faux' }
+      ];
+      if (JSON.stringify(answers) !== JSON.stringify(updatedAnswers)) {
+        setAnswers(updatedAnswers);
+      }
+    }
+
+    if (['ReponsesCourtes', 'SeuleReponse', 'Correspondance'].includes(questionType)) {
+      const updatedAnswers = [{ text: correctAnswer, isCorrect: true }];
+      if (JSON.stringify(answers) !== JSON.stringify(updatedAnswers)) {
+        setAnswers(updatedAnswers);
+      }
+    }
+  }, [questionType, correctAnswer]);
+
+  // Transmettre les données au parent
+  useEffect(() => {
     onChange(index, {
       text: questionTitle,
       type: questionType,
@@ -32,9 +51,23 @@ const Question = ({ index, removeQuestion, onChange }) => {
   };
 
   const handleQuestionTypeChange = (e) => {
-    setQuestionType(e.target.value);
-    setAnswers([]);  // Reset les réponses à chaque changement de type de question
+    const value = e.target.value;
+    setQuestionType(value);
     setCorrectAnswer('');
+
+    if (value === 'VraiFaux') {
+      setAnswers([
+        { text: 'Vrai', isCorrect: false },
+        { text: 'Faux', isCorrect: false }
+      ]);
+    } else if (value === 'ChoixMultiple') {
+      setAnswers([
+        { text: '', isCorrect: false },
+        { text: '', isCorrect: false }
+      ]);
+    } else {
+      setAnswers([{ text: '', isCorrect: true }]);
+    }
   };
 
   const handleAnswerChange = (index, e) => {
@@ -43,10 +76,8 @@ const Question = ({ index, removeQuestion, onChange }) => {
     setAnswers(newAnswers);
   };
 
-  const handleCorrectAnswerChange = (index) => {
-    const newAnswers = [...answers];
-    newAnswers[index].isCorrect = !newAnswers[index].isCorrect;
-    setAnswers(newAnswers);
+  const handleCorrectAnswerChange = (value) => {
+    setCorrectAnswer(value);
   };
 
   const addAnswer = () => {
@@ -65,7 +96,6 @@ const Question = ({ index, removeQuestion, onChange }) => {
 
   return (
     <Box sx={{ padding: '20px' }}>
-      {/* Row: Type de question + Score */}
       <Grid container spacing={2} sx={{ marginBottom: '15px' }}>
         <Grid item xs={8}>
           <FormControl fullWidth>
@@ -104,7 +134,6 @@ const Question = ({ index, removeQuestion, onChange }) => {
         </Grid>
       </Grid>
 
-      {/* Question Title */}
       <TextField
         label={`Question ${index + 1}`}
         fullWidth
@@ -115,7 +144,6 @@ const Question = ({ index, removeQuestion, onChange }) => {
         sx={{ marginBottom: '15px' }}
       />
 
-      {/* Render answers by type */}
       {questionType === 'ChoixMultiple' && (
         <>
           {answers.map((answer, i) => (
@@ -135,7 +163,11 @@ const Question = ({ index, removeQuestion, onChange }) => {
                   control={
                     <Checkbox
                       checked={answer.isCorrect}
-                      onChange={() => handleCorrectAnswerChange(i)}
+                      onChange={() => {
+                        const newAnswers = [...answers];
+                        newAnswers[i].isCorrect = !newAnswers[i].isCorrect;
+                        setAnswers(newAnswers);
+                      }}
                       color="primary"
                     />
                   }
@@ -166,7 +198,6 @@ const Question = ({ index, removeQuestion, onChange }) => {
         </>
       )}
 
-      {/* Other types */}
       {['ReponsesCourtes', 'SeuleReponse', 'Correspondance'].includes(questionType) && (
         <TextField
           label="Réponse correcte"
@@ -184,7 +215,7 @@ const Question = ({ index, removeQuestion, onChange }) => {
           <InputLabel>Choisir Vrai ou Faux</InputLabel>
           <Select
             value={correctAnswer}
-            onChange={(e) => setCorrectAnswer(e.target.value)}
+            onChange={(e) => handleCorrectAnswerChange(e.target.value)}
             label="Choisir Vrai ou Faux"
           >
             <MenuItem value="Vrai">Vrai</MenuItem>
@@ -193,7 +224,6 @@ const Question = ({ index, removeQuestion, onChange }) => {
         </FormControl>
       )}
 
-      {/* Remove question */}
       <Button
         variant="outlined"
         color="error"

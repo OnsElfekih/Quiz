@@ -4,62 +4,101 @@ const Quiz = require("../../models/quiz");
 const Question = require("../../models/Question");
 
 // Ajouter une fonction pour valider les questions
-const validateQuestions = (questions) => {
-    return questions.every(q => 
-        q.text && typeof q.text === 'string' &&
-        q.type && ['multiple', 'true-false'].includes(q.type) &&
-        q.score && typeof q.score === 'number' && q.score > 0 &&
-        Array.isArray(q.reponses) && q.reponses.length > 0
-    );
-};
+function validateQuestions(questions) {
+    for (let i = 0; i < questions.length; i++) {
+      const question = questions[i];
+      console.log(`Vérification de la question ${i + 1}:`, question);
+  
+      if (!question.text || !question.type || !question.reponses || !Array.isArray(question.reponses) || question.reponses.length < 1) {
+        console.log("Erreur dans les données de la question", question);
+        return false;
+      }
+  
+      // Vérification des réponses
+      for (let j = 0; j < question.reponses.length; j++) {
+        const reponse = question.reponses[j];
+        if (typeof reponse.isCorrect !== 'boolean') {
+          console.log("Réponse incorrecte (isCorrect non défini ou non boolean)", reponse);
+          return false;
+        }
+      }
+  
+      // Validation spécifique par type
+      switch (question.type) {
+        case "ChoixMultiple":
+        case "Correspondance":
+          if (question.reponses.length < 2) {
+            console.log(`Le type ${question.type} nécessite au moins 2 réponses.`);
+            return false;
+          }
+          break;
+  
+        case "SeuleReponse":
+          if (question.reponses.length !== 1) {
+            console.log("Le type SeuleReponse nécessite exactement 1 réponse.");
+            return false;
+          }
+          break;
+  
+        case "VraiFaux":
+          const hasVrai = question.reponses.some(r => r.text === "Vrai");
+          const hasFaux = question.reponses.some(r => r.text === "Faux");
+          if (question.reponses.length !== 2 || !hasVrai || !hasFaux) {
+            console.log("Le type VraiFaux nécessite exactement les réponses 'Vrai' et 'Faux'.");
+            return false;
+          }
+          break;
+  
+        case "ReponsesCourtes":
+          if (!question.reponses[0].text || question.reponses.length !== 1) {
+            console.log("Le type ReponsesCourtes nécessite exactement 1 réponse texte.");
+            return false;
+          }
+          break;
+  
+        default:
+          console.log("Type de question non reconnu :", question.type);
+          return false;
+      }
+    }
+  
+    return true;
+  }
+  
+  
 
 // @route POST api/quizs/create
 // @desc Créer un nouveau quiz
 // @access Public
 router.post("/create", async (req, res) => {
-    const quizData = req.body;
-    console.log(quizData);
+    
 
     try {
-        const { titre, nbQuestions, pic, creator, questions } = req.body;
+        console.log("Données envoyées create!! :", req.body);
+        const { titre, nbQuestions, creator, time, score, questions } = req.body;
 
         // Validation des champs obligatoires
         if (!titre || !nbQuestions || !creator || !Array.isArray(questions)) {
+            console.log("Validation échouée :");
+            console.log("titre:", titre);
+            console.log("nbQuestions:", nbQuestions);
+            console.log("creator:", creator);
+            console.log("questions est un tableau ?", Array.isArray(questions));
             return res.status(400).json({ message: "Champs requis manquants ou invalides." });
         }
 
         // Validation des questions
-        if (!validateQuestions(questions)) {
+         if (!validateQuestions(questions)) {
             return res.status(400).json({ message: "Les questions contiennent des erreurs." });
-        }
+        } 
 
-        // 1. Créer les questions et récupérer leurs IDs + total du score
-        let totalScore = 0;
-        const savedQuestions = await Promise.all(
-            questions.map(async (q) => {
-                const newQuestion = new Question({
-                    text: q.text,
-                    type: q.type,
-                    temps: q.temps,
-                    score: q.score,
-                    reponses: q.reponses,
-                });
-                const saved = await newQuestion.save();
-                totalScore += saved.score;
-                return saved;
-            })
-        );
-
-        const questionIds = savedQuestions.map(q => q._id);
-
-        // 2. Créer le quiz avec le score total
         const newQuiz = new Quiz({
             titre,
             nbQuestions,
-            score: totalScore, // Calculé automatiquement ici
-            pic,
+            time,
+            score,
             creator,
-            questions: questionIds
+            questions
         });
 
         const savedQuiz = await newQuiz.save();
@@ -67,10 +106,15 @@ router.post("/create", async (req, res) => {
         res.status(201).json({ message: "Quiz créé avec succès", quiz: savedQuiz });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Une erreur est survenue lors de la création du quiz." });
+        console.error("Erreur complète :", error);
+        if (error.code === 11000 && error.keyPattern && error.keyPattern.titre) {
+            return res.status(400).json({ message: "Ce titre de quiz existe déjà. Choisissez un autre." });
+          }
+        res.status(500).json({ message: "Erreur serveur", error: error.message });
     }
 });
+
+
 
 // @route GET api/quiz/all
 // @desc Récupérer tous les quizzes

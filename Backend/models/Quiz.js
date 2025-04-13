@@ -17,23 +17,26 @@ const QuizSchema = new mongoose.Schema({
         required: true,
         min: 0, 
     },
-    date: {
-        type: Date, 
-        default: Date.now, 
+    time: {
+        type: Number,
         required: true,
+        min: 0, 
     },
     
     creator: {
-        type: mongoose.Schema.Types.ObjectId, // Reference to the User model
+        type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 
         required: true,
     },
     questions: [
         {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Question"
+          text: { type: String, required: true },
+          type: { type: String, enum: ["ChoixMultiple", "ReponsesCourtes", "VraiFaux", "SeuleReponse", "Correspondance"], required: true },
+          temps: { type: Number, required: true },
+          reponses: [{ text: String, isCorrect: Boolean }],
+          score: { type: Number, required: true }
         }
-      ],
+    ],
     creationDate: {
         type: Date,
         default: Date.now, 
