@@ -1,80 +1,54 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Container, Grid, TextField, IconButton } from '@mui/material';
-
-import LogoQuiz from './Icons/LogoQuiz.png'; // Logo
-import MenuIcon from './Icons/menu.png'; // Icône de menu
-import homeIcon from './Icons/home.png'; // Icône de la page d'accueil
-import userIcon from './Icons/user.png'; // Exemple d'icône utilisateur
-import quizzesIcon from './Icons/quizzes.png'; // Exemple d'icône de quiz
-import createIcon from './Icons/create.png'; // Icône de création de quiz
-import addIcon from './Icons/add.png'; // Icône de add quiz
-import searchIcon from './Icons/search.png'; // Icône de search quiz
+import LogoQuiz from './Icons/LogoQuiz.png';
+import MenuIcon from './Icons/menu.png';
+import homeIcon from './Icons/home.png';
+import userIcon from './Icons/user.png';
+import quizzesIcon from './Icons/quizzes.png';
+import createIcon from './Icons/create.png';
+import addIcon from './Icons/add.png';
+import searchIcon from './Icons/search.png';
 import Cookies from 'js-cookie';
-import {useUser } from './UserContext';
+import { useUser } from './UserContext';
 import QuizForm from './QuizForm';
 import Profile from './Profile';
+import HomeDashboard from './HomeDashboard';
+import ParticipateQuiz from './ParticipateQuiz';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
-  //const [questions, setQuestions] = useState([]);
+  const [selectedQuizId, setSelectedQuizId] = useState(null);
   const navigate = useNavigate();
-  const  user  = useUser();
+  const user = useUser();
+  
   useEffect(() => {
-    // Check if token exists in cookies
     const token = Cookies.get("token");
-
     if (!token) {
-      navigate("/login");  // Redirect to login if no token
+      navigate("/login");
     }
-    
   }, [navigate]);
 
   const handleLogout = () => {
     Cookies.remove("token");
     Cookies.remove("role");
-    Cookies.remove("username"); // Supprimer le nom d'utilisateur lors de la déconnexion
+    Cookies.remove("username");
     window.location.href = '/login';
   };
-  
-
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
   };
 
   const handleMenuClick = (page) => {
+    setSelectedQuizId(null); // Reset selected quiz when changing pages
     setCurrentPage(page);
   };
-  const username = Cookies.get("username"); // Récupérer le nom d'utilisateur depuis les cookies
 
+  const username = Cookies.get("username");
 
-  /* const handleAddQuestion = () => {
-    setQuestions([
-      ...questions,
-      {
-        text: '',
-        type: 'ChoixMultiple',
-        temps: 30,
-        reponses: [{ text: '', valide: false }],
-      }
-    ]);
-  }; */
-
-  /* const handleQuestionChange = (index, field, value) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[index][field] = value;
-    setQuestions(updatedQuestions);
-  };
-
-  const handleResponseChange = (questionIndex, responseIndex, field, value) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[questionIndex].reponses[responseIndex][field] = value;
-    setQuestions(updatedQuestions);
-  };
- */
   return (
     <div style={{ background: 'linear-gradient(to bottom, #00aaff, #0044cc)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AppBar position="fixed" sx={{ top: 0, left: 0, right: 0, backgroundColor: 'white', boxShadow: 3 }}>
@@ -115,14 +89,14 @@ const Dashboard = () => {
           <Button
             onClick={() => handleMenuClick('create-quiz')}
             sx={{
-              background: 'linear-gradient(to right, #00aaff, #0044cc)', // Dégradé bleu
-              color: 'white', // Texte en blanc
-              borderRadius: '8px', // Bordures arrondies
-              padding: '8px 16px', // Espacement autour du texte et de l'icône
-              display: 'flex', // Pour aligner l'icône et le texte horizontalement
-              alignItems: 'center', // Centrer l'icône et le texte verticalement
+              background: 'linear-gradient(to right, #00aaff, #0044cc)',
+              color: 'white',
+              borderRadius: '8px',
+              padding: '8px 16px',
+              display: 'flex',
+              alignItems: 'center',
               '&:hover': {
-                background: 'linear-gradient(to right, #0044cc, #00aaff)', // Inverser le dégradé au survol
+                background: 'linear-gradient(to right, #0044cc, #00aaff)',
               },
             }}
           >
@@ -159,7 +133,7 @@ const Dashboard = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: currentPage === 'home' ? 'linear-gradient(to right, #00aaff, #0044cc)' : 'transparent',
+              backgroundColor: currentPage === 'home' ? '#00aaff' : 'transparent',
               padding: '10px',
               borderRadius: '8px',
               marginBottom: '10px',
@@ -176,7 +150,7 @@ const Dashboard = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: currentPage === 'profile' ? 'linear-gradient(to right, #00aaff, #0044cc)' : 'transparent',
+              backgroundColor: currentPage === 'profile' ? '#00aaff' : 'transparent',
               padding: '10px',
               borderRadius: '8px',
               marginBottom: '10px',
@@ -193,7 +167,7 @@ const Dashboard = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: currentPage === 'my-quizzes' ? 'linear-gradient(to right, #00aaff, #0044cc)' : 'transparent',
+              backgroundColor: currentPage === 'my-quizzes' ? '#00aaff' : 'transparent',
               padding: '10px',
               borderRadius: '8px',
               marginBottom: '10px',
@@ -210,7 +184,7 @@ const Dashboard = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: currentPage === 'create-quiz' ? 'linear-gradient(to right, #00aaff, #0044cc)' : 'transparent',
+              backgroundColor: currentPage === 'create-quiz' ? '#00aaff' : 'transparent',
               padding: '10px',
               borderRadius: '8px',
               marginBottom: '10px',
@@ -227,41 +201,23 @@ const Dashboard = () => {
       </Box>
 
       <Container sx={{ marginTop: '150px', marginLeft: isMenuOpen ? '350px' : '150px', transition: 'margin-left 0.3s ease' }}>
-        {currentPage === 'home' && (
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={6}>
-              <Box sx={{ padding: '20px', borderRadius: '8px', boxShadow: 0 }}>
-                <Typography variant="h5" color="white" gutterBottom>
-                  Participer aux quizzes
-                </Typography>
-                <Grid container spacing={2}>
-                  {[1, 2, 3, 4].map((quiz, index) => (
-                    <Grid item xs={12} key={index}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          backgroundColor: 'white',
-                          borderRadius: '8px',
-                          padding: '16px',
-                          boxShadow: 3,
-                          '&:hover': {
-                            boxShadow: 6,
-                          },
-                        }}
-                      >
-                        <Typography variant="h6">Quiz {index + 1}</Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          Description du quiz {index + 1}.
-                        </Typography>
-                        <Button sx={{ marginTop: '10px' }}>Participer</Button>
-                      </Box>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
-            </Grid>
-          </Grid>
+        {currentPage === 'home' && !selectedQuizId && (
+          <HomeDashboard 
+            onParticipateClick={(quizId) => {
+              setSelectedQuizId(quizId);
+              setCurrentPage('participate-quiz');
+            }} 
+          />
+        )}
+        
+        {currentPage === 'participate-quiz' && selectedQuizId && (
+          <ParticipateQuiz 
+            quizId={selectedQuizId}
+            onBack={() => {
+              setSelectedQuizId(null);
+              setCurrentPage('home');
+            }}
+          />
         )}
 
         {currentPage === 'profile' && <Profile/>}
@@ -275,7 +231,7 @@ const Dashboard = () => {
           </Box>
         )}
 
-      {currentPage === 'create-quiz' && <QuizForm creator={username} />}
+        {currentPage === 'create-quiz' && <QuizForm creator={username} />}
       </Container>
     </div>
   );

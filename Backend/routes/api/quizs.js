@@ -104,6 +104,7 @@ router.post("/create", async (req, res) => {
         const savedQuiz = await newQuiz.save();
 
         res.status(201).json({ message: "Quiz créé avec succès", quiz: savedQuiz });
+        console.log("Quiz créé avec succès !!");
 
     } catch (error) {
         console.error("Erreur complète :", error);
