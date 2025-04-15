@@ -74,21 +74,6 @@ const Dashboard = () => {
               sx: { paddingLeft: 1 }
             }}
           />
-                      <Button
-              sx={{
-                minWidth: '40px',
-                padding: '6px ',
-                marginLeft: '8px',
-                borderRadius: '8px',
-                alignItems: 'center',
-                backgroundColor: '#e0e0e0',
-                '&:hover': {
-                  backgroundColor: '#d0d0d0',
-                },
-              }}
-            >
-              <img src={searchIcon} alt="Rechercher" style={{ width: 20, height: 20 }} />
-            </Button>
           </div>
           <Button
             onClick={() => handleMenuClick('create-quiz')}
