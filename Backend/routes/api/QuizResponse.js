@@ -1,12 +1,18 @@
-const express = require('express');
+
+const express = require("express");
 const router = express.Router();
-const QuizResponse = require('../models/QuizResponse');
-const Quiz = require('../models/Quiz'); // Le modèle Quiz
+const Quiz = require("../../models/quiz");
+const QuizResponse = require("../../models/quizResponse");
+
+
+console.log("QuizResponse route file loaded");
 
 // Route pour soumettre les résultats d'un quiz
-router.post('/submit-quiz', async (req, res) => {
-  const { userId, quizId, score, date } = req.body; // Extraction de userId, quizId, score et date
+router.post('/submitquiz', async (req, res) => {
+  console.log("Requête POST reçue à /submitquiz"); 
 
+  const { userId, quizId, score} = req.body; // Extraction de userId, quizId, score et date
+  console.log('Données reçues :', req.body);
   try {
     const quiz = await Quiz.findById(quizId);
     if (!quiz) {

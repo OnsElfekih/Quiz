@@ -5,8 +5,9 @@ import {
   Radio, FormControlLabel, Button, TextField, LinearProgress,
   Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress
 } from '@mui/material';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import CheckIcon from '@mui/icons-material/Check';
+import { useUser } from './UserContext';
+
 
 const ParticipateQuiz = ({ quizId, onBack }) => {
   const [quiz, setQuiz] = useState(null);
@@ -18,6 +19,13 @@ const ParticipateQuiz = ({ quizId, onBack }) => {
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const user = useUser();
+  const [formData, setFormData] = useState({
+    userId: user.user._id,  
+    quizId: quizId,
+    score: 0,
+    });
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -90,7 +98,7 @@ const ParticipateQuiz = ({ quizId, onBack }) => {
     }, 1000);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsQuizActive(false);
     let score = 0;
     quiz.questions.forEach((question, index) => {
@@ -105,7 +113,20 @@ const ParticipateQuiz = ({ quizId, onBack }) => {
       }
     });
     setTotalScore(score);
-    setOpenModal(true);
+    formData.score=score;
+    console.log("Befor try -- Data : ",formData);
+    
+    try {
+        console.log("Data sent :",formData);
+        const reponse = await axios.post('http://localhost:3003/quizReponse/submitquiz', {
+        formData
+      });
+      console.log("inside try -- Data sent :",formData);
+      setMessage(reponse.data.msg);
+      setOpenModal(true);
+    } catch (err) {
+      console.error('Error submitting quiz results:', err);
+    }
   };
 
   if (!quiz) return <Typography>Loading...</Typography>;
