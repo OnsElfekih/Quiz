@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useUser } from './UserContext';
 import {
   Grid,
   Box,
@@ -12,6 +13,7 @@ import {
 
 const HomeDashboard = ({ onParticipateClick }) => {
   const [quizzes, setQuizzes] = useState([]);
+  const user = useUser();
 
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -38,6 +40,9 @@ const HomeDashboard = ({ onParticipateClick }) => {
               <CardContent>
                 <Typography variant="h6" gutterBottom>
                   {quiz.titre}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Créé par :{user.user.username}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Nombre de questions : {quiz.nbQuestions}
