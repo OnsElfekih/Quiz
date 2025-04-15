@@ -11,7 +11,9 @@ const User = require("../../models/User");
 // @route GET api/users/me
 // @desc Récupérer les infos de l'utilisateur connecté
 // @access Privé
-router.get("/me", async (req, res) => {
+
+router.get("/me",  async (req, res) => {
+
     try {
         const user = await User.findById(req.user.id).select("-password");
         if (!user) {
