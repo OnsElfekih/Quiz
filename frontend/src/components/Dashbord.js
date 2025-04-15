@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
   const [selectedQuizId, setSelectedQuizId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   const user = useUser();
   
@@ -57,20 +58,23 @@ const Dashboard = () => {
             <img src={LogoQuiz} alt="Logo" style={{ width: '70px', height: '40px' }} />
           </div>
           <div style={{ display: 'flex' }}>
-            <TextField
-              variant="outlined"
-              placeholder="Rechercher un quiz..."
-              size="small"
-              sx={{
-                width: 250,
-                backgroundColor: '#f5f5f5',
-                borderRadius: 2,
-              }}
-              InputProps={{
-                sx: { paddingLeft: 1 }
-              }}
-            />
-            <Button
+          <TextField
+            fullWidth
+            variant="outlined"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Rechercher un quiz..."
+            size="small"
+            sx={{
+              width: 250,
+              backgroundColor: '#f5f5f5',
+              borderRadius: 2,
+            }}
+            InputProps={{
+              sx: { paddingLeft: 1 }
+            }}
+          />
+                      <Button
               sx={{
                 minWidth: '40px',
                 padding: '6px ',
@@ -202,24 +206,23 @@ const Dashboard = () => {
 
       <Container sx={{ marginTop: '150px', marginLeft: isMenuOpen ? '350px' : '150px', transition: 'margin-left 0.3s ease' }}>
         {currentPage === 'home' && !selectedQuizId && (
-          <HomeDashboard 
+          <HomeDashboard
             onParticipateClick={(quizId) => {
               setSelectedQuizId(quizId);
               setCurrentPage('participate-quiz');
-            }} 
-          />
-        )}
-        
-        {currentPage === 'participate-quiz' && selectedQuizId && (
-          <ParticipateQuiz 
-            quizId={selectedQuizId}
-            onBack={() => {
-              setSelectedQuizId(null);
-              setCurrentPage('home');
             }}
+            searchTerm={searchTerm}
           />
-        )}
+      )}
 
+      {currentPage === 'participate-quiz' && selectedQuizId && (
+        <ParticipateQuiz quizId={selectedQuizId} 
+        onBack={() => {
+          setSelectedQuizId(null);
+          setCurrentPage('home');
+        }}
+        />
+      )}
         {currentPage === 'profile' && <Profile/>}
 
         {currentPage === 'my-quizzes' && (
@@ -230,10 +233,9 @@ const Dashboard = () => {
             <Typography variant="body1" color="white">Liste des quizzes créés</Typography>
           </Box>
         )}
-
         {currentPage === 'create-quiz' && <QuizForm creator={username} />}
-      </Container>
-    </div>
+        </Container>
+      </div>
   );
 };
 

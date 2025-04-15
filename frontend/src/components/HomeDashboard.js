@@ -11,7 +11,7 @@ import {
   CardActions,
 } from '@mui/material';
 
-const HomeDashboard = ({ onParticipateClick }) => {
+const HomeDashboard = ({ onParticipateClick, searchTerm }) => {
   const [quizzes, setQuizzes] = useState([]);
   const user = useUser();
 
@@ -28,13 +28,17 @@ const HomeDashboard = ({ onParticipateClick }) => {
     fetchQuizzes();
   }, []);
 
+  const filteredQuizzes = quizzes.filter((quiz) =>
+    quiz.titre.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom color="white">
         Tous les Quizzes Disponibles
       </Typography>
       <Grid container spacing={3}>
-        {quizzes.map((quiz) => (
+        {filteredQuizzes.map((quiz) => (
           <Grid item xs={12} sm={6} md={4} key={quiz._id}>
             <Card sx={{ borderRadius: 3, boxShadow: 5 }}>
               <CardContent>
@@ -42,7 +46,7 @@ const HomeDashboard = ({ onParticipateClick }) => {
                   {quiz.titre}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Créé par :{user.user.username}
+                  Créé par : {user.user.username}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Nombre de questions : {quiz.nbQuestions}
