@@ -1,19 +1,14 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const config = require("config");
-
 const jwt = require("jsonwebtoken");
-
 const User = require("../../models/User");
-
-
 
 // @route GET api/users/me
 // @desc Récupérer les infos de l'utilisateur connecté
 // @access Privé
 
 router.get("/me",  async (req, res) => {
-
     try {
         const user = await User.findById(req.user.id).select("-password");
         if (!user) {
@@ -24,10 +19,6 @@ router.get("/me",  async (req, res) => {
         res.status(500).json({ message: "Erreur serveur", error });
     }
 });
-
-  
-
-
 // @route POST api/users/register
 // @desc Register new user
 // @access Public
@@ -66,11 +57,6 @@ router.post("/register", async (req, res) => {
         res.status(500).json({ status: "error", msg: "Erreur serveur", error: err.message });
     }
 });
-
-  
-
-
-
     // @route POST api/users/login
     // @desc Login user
     // @access Public
@@ -109,7 +95,6 @@ router.post("/register", async (req, res) => {
             res.status(500).json({ error: "Internal server error" });
         }        
     });
-
 
     // @route GET api/users/all
     // @desc Get all users
@@ -180,9 +165,6 @@ router.post("/register", async (req, res) => {
         }
     });
     
-
-
-
     // Mettre à jour un utilisateur par ID (UPDATE)
     router.put('/:id', async (req, res) => {
         const { id } = req.params;
@@ -215,5 +197,23 @@ router.post("/register", async (req, res) => {
         res.status(500).json({ message: 'Erreur lors de la suppression de l\'utilisateur', error });
         }
     });
+// @route GET api/users/username
+// @desc Récupérer un utilisateur par son nom d'utilisateur
+// @access Public (à sécuriser selon les besoins)
+
+router.get('/:username', async (req, res) => {
+    const { username } = req.params;
+    console.log("Username reçu:", username); // Log du username pour débogage
+    try {
+        const user = await User.findOne({ username: username }).select("-password");
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        console.error(error); // Log d'erreur détaillé
+        res.status(500).json({ message: "Erreur serveur", error });
+    }
+});
 
 module.exports = router;
