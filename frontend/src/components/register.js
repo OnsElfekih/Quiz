@@ -5,8 +5,11 @@ import {
   Button,
   Box,
   Typography,
-  Paper
+  Paper,
+  InputAdornment,
+  IconButton
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import LogoQuiz from "./Icons/LogoQuiz.png";
 import user_icon from "./Icons/user.png";
@@ -19,6 +22,7 @@ const Register = () => {
   });
 
   const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -42,6 +46,10 @@ const Register = () => {
     } catch (error) {
       setMessage(error.response?.data?.msg || "Une erreur est survenue !");
     }
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(prev => !prev);
   };
 
   return (
@@ -88,13 +96,22 @@ const Register = () => {
             <img src={password_icon} alt="password" style={{ marginRight: 16, width: 24, height: 24 }} />
             <TextField
               fullWidth
-              type="password"
+              type={showPassword ? "text" : "password"}
               label="Mot de passe"
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
-              InputProps={{ sx: { borderRadius: 2 } }}
+              InputProps={{
+                sx: { borderRadius: 2 },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={toggleShowPassword} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Box>
 
