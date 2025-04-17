@@ -13,7 +13,7 @@ import {
   CardActions,
 } from '@mui/material';
 
-const MyQuizzes = ({ onParticipateClick, searchTerm = '' }) => {
+const MyQuizzes = ({ onEditClick, searchTerm = '' }) => {
   const [quizzes, setQuizzes] = useState([]);
   const user = useUser(); // Get the current logged-in user
 
@@ -72,7 +72,7 @@ const MyQuizzes = ({ onParticipateClick, searchTerm = '' }) => {
             <Button
               size="small"
               variant="contained"
-              onClick={() => onParticipateClick(quiz._id)}
+              onClick={() => onEditClick(quiz._id)}
             >
               Éditer
             </Button>

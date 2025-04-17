@@ -11,7 +11,7 @@ import {
   CardActions,
 } from '@mui/material';
 
-const HomeDashboard = ({ onParticipateClick, searchTerm }) => {
+const HomeDashboard = ({ onParticipateClick,onParticipateClick, searchTerm }) => {
   const [quizzes, setQuizzes] = useState([]);
   const [users, setUsers] = useState([]);
   const user = useUser();

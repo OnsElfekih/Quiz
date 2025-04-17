@@ -14,6 +14,8 @@ import QuizForm from './QuizForm';
 import Profile from './Profile';
 import HomeDashboard from './HomeDashboard';
 import ParticipateQuiz from './ParticipateQuiz';
+import EditQuizForm from './EditQuizForm';
+
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MyQuizzes from './MyQuizzes';
@@ -201,14 +203,26 @@ const Dashboard = () => {
           />
       )}
 
+    {currentPage === 'MyQuizzez' && !selectedQuizId && (
+              <HomeDashboard
+                onEditClick={(quizId) => {
+                  setSelectedQuizId(quizId);
+                  setCurrentPage('EditQuizForm');
+                }}
+                searchTerm={searchTerm}
+              />
+          )}
+
       {currentPage === 'participate-quiz' && selectedQuizId && (
         <ParticipateQuiz quizId={selectedQuizId} 
         onBack={() => {
           setSelectedQuizId(null);
           setCurrentPage('home');
-        }}
+        }}  
         />
       )}
+      
+
         {currentPage === 'profile' && <Profile/>}
 
         {currentPage === 'my-quizzes' && <MyQuizzes/>}
