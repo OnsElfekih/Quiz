@@ -222,6 +222,21 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ message: 'Erreur lors de la suppression du quiz', error });
     }
 });
+router.get('/quizs/createdBy/:id', async (req, res) => {
+  try {
+    const iduser = req.params.id;
+
+    const quizzes = await Quiz.find({ creator: iduser }) // Filtrer dans la requête directement
+      .populate('creator', 'username') // Récupérer juste le nom d'utilisateur
+      .exec();
+
+    res.json(quizzes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur lors de la récupération des quiz' });
+  }
+});
+
 
 
 

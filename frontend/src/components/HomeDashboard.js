@@ -13,25 +13,30 @@ import {
 
 const HomeDashboard = ({ onParticipateClick, searchTerm }) => {
   const [quizzes, setQuizzes] = useState([]);
+  const [users, setUsers] = useState([]);
   const user = useUser();
 
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
         const response = await axios.get('http://localhost:3003/quizs/all');
+        console.log(response.data)
         setQuizzes(response.data);
       } catch (error) {
         console.error('Erreur lors de la récupération des quizzes :', error);
       }
     };
-
+    const fetchUsers = async () => {
+      const response = await axios.get('http://localhost:3003/users/all');
+      setUsers(response.data);
+    };
     fetchQuizzes();
+    fetchUsers();
   }, []);
 
   const filteredQuizzes = quizzes.filter((quiz) =>
     quiz.titre.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom color="white">
@@ -46,7 +51,9 @@ const HomeDashboard = ({ onParticipateClick, searchTerm }) => {
                   {quiz.titre}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Créé par : {user.user.username}
+                  Créé par :  {
+    users.find(user => user._id === quiz.creator)?.username || "Inconnu"
+  }
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Nombre de questions : {quiz.nbQuestions}

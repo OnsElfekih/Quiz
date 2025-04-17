@@ -16,6 +16,7 @@ import HomeDashboard from './HomeDashboard';
 import ParticipateQuiz from './ParticipateQuiz';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import MyQuizzes from './MyQuizzes';
 
 const Dashboard = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -210,14 +211,7 @@ const Dashboard = () => {
       )}
         {currentPage === 'profile' && <Profile/>}
 
-        {currentPage === 'my-quizzes' && (
-          <Box sx={{ padding: 2, backgroundColor: 'transparent', borderRadius: 2 }}>
-            <Typography variant="h5" color="white" gutterBottom>
-              Mes Quizzes
-            </Typography>
-            <Typography variant="body1" color="white">Liste des quizzes créés</Typography>
-          </Box>
-        )}
+        {currentPage === 'my-quizzes' && <MyQuizzes/>}
         {currentPage === 'create-quiz' && <QuizForm creator={username} />}
         </Container>
       </div>
