@@ -34,9 +34,15 @@ const HomeDashboard = ({ onParticipateClick, searchTerm }) => {
     fetchUsers();
   }, []);
 
-  const filteredQuizzes = quizzes.filter((quiz) =>
-    quiz.titre.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredQuizzes = quizzes.filter((quiz) => {
+    const titre = quiz.titre?.toLowerCase() || '';
+    const creator = users.find(user => user._id === quiz.creator);
+    const creatorName = creator?.username?.toLowerCase() || '';
+    const term = (searchTerm || '').toLowerCase();
+  
+    return titre.includes(term) || creatorName.includes(term);
+  });
+  
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom color="white">
