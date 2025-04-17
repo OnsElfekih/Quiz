@@ -27,6 +27,12 @@ const ParticipateQuiz = ({ quizId, onBack }) => {
     score: 0,
     });
 
+    const u = user.user._id;
+    const q = quizId;
+    const score = 0;
+
+
+
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
@@ -118,9 +124,9 @@ const ParticipateQuiz = ({ quizId, onBack }) => {
     
     try {
         console.log("Data sent :",formData);
-        const reponse = await axios.post('http://localhost:3003/quizReponse/submitquiz', {
-        formData
-      });
+        const reponse = await axios.post(`http://localhost:3003/quizResponse/submitquiz/${u}/${q}`,{
+          score
+        });
       console.log("inside try -- Data sent :",formData);
       setMessage(reponse.data.msg);
       setOpenModal(true);
