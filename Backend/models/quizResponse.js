@@ -18,7 +18,7 @@ const QuizResponseSchema = new mongoose.Schema({
     },
   completedAt: { 
     type: Date, 
-    default: Date.now 
+    default: Date.now() 
     }
 });
 
