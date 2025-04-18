@@ -5,10 +5,10 @@ const Quiz = require("../../models/quiz");
 const QuizResponse = require("../../models/quizResponse");
 
 
-console.log("QuizResponse route file loaded");
+  console.log("QuizResponse route file loaded");
 
-// Route pour soumettre les résultats d'un quiz
-router.post('/submitquiz/:userId/:quizId', async (req, res) => {
+  // Route pour soumettre les résultats d'un quiz
+  router.post('/submitquiz/:userId/:quizId', async (req, res) => {
   console.log("Requête POST reçue à /submitquiz"); 
 
   const {score} = req.body;
@@ -39,6 +39,26 @@ router.post('/submitquiz/:userId/:quizId', async (req, res) => {
     console.error('Error submitting quiz:', err);
     res.status(500).json({ message: 'Server error' });
   }
-});
+  });
+  // Route to get completed quizzes for a specific user
+  router.get('/completed-quizzes/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+
+      // Fetch the completed quizzes for the user, populating the quiz details
+      const completedQuizzes = await QuizResponse.find({ userId })
+        .populate('quizId')  // This will populate the quiz details
+        .exec();
+
+      if (!completedQuizzes.length) {
+        return res.status(404).json({ message: 'No completed quizzes found' });
+      }
+
+      res.status(200).json(completedQuizzes);
+    } catch (err) {
+      console.error('Error fetching completed quizzes:', err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
 
 module.exports = router;

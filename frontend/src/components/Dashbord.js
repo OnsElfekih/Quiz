@@ -58,7 +58,12 @@ const Dashboard = () => {
       <AppBar position="fixed" sx={{ top: 0, left: 0, right: 0, backgroundColor: 'white', boxShadow: 3 }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-            <img src={LogoQuiz} alt="Logo" style={{ width: '70px', height: '40px' }} />
+          <img 
+              src={LogoQuiz} 
+              alt="Logo" 
+              style={{ width: '70px', height: '40px', cursor: 'pointer'}}
+              onClick={() => handleMenuClick('home')}
+            /> 
           </div>
           <div style={{ display: 'flex' }}>
           <TextField
@@ -201,31 +206,28 @@ const Dashboard = () => {
             }}
             searchTerm={searchTerm}
           />
-      )}
-
-    {currentPage === 'MyQuizzez' && !selectedQuizId && (
-              <HomeDashboard
+        )}
+        {currentPage === 'EditQuizForm' && selectedQuizId && (
+          <EditQuizForm quizId={selectedQuizId} />
+        )}
+        {currentPage === 'my-quizzes' && !selectedQuizId && (
+              <MyQuizzes
                 onEditClick={(quizId) => {
                   setSelectedQuizId(quizId);
                   setCurrentPage('EditQuizForm');
                 }}
                 searchTerm={searchTerm}
               />
-          )}
-
-      {currentPage === 'participate-quiz' && selectedQuizId && (
-        <ParticipateQuiz quizId={selectedQuizId} 
-        onBack={() => {
-          setSelectedQuizId(null);
-          setCurrentPage('home');
-        }}  
-        />
-      )}
-      
-
+        )}
+        {currentPage === 'participate-quiz' && selectedQuizId && (
+          <ParticipateQuiz quizId={selectedQuizId} 
+          onBack={() => {
+            setSelectedQuizId(null);
+            setCurrentPage('home');
+          }}  
+          />
+        )}
         {currentPage === 'profile' && <Profile/>}
-
-        {currentPage === 'my-quizzes' && <MyQuizzes/>}
         {currentPage === 'create-quiz' && <QuizForm creator={username} />}
         </Container>
       </div>

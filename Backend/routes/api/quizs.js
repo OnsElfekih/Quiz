@@ -145,10 +145,10 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// @route PUT api/quiz/:id
+// @route PUT api/quiz/edit/:id
 // @desc Mettre à jour un quiz par ID avec recalcul dynamique du score
 // @access Public
-router.put('/:id', async (req, res) => {
+router.put('/edit/:id', async(req, res) => {
     const { id } = req.params;
     const { titre, nbQuestions, pic, creator, questions } = req.body;
 
@@ -210,7 +210,7 @@ router.put('/:id', async (req, res) => {
 // @route DELETE api/quiz/:id
 // @desc Supprimer un quiz par ID
 // @access Public
-router.delete('/:id', async (req, res) => {
+router.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const deletedQuiz = await Quiz.findByIdAndDelete(id);
