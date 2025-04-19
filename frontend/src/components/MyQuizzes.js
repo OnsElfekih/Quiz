@@ -97,6 +97,7 @@ const MyQuizzes = ({ onEditClick, searchTerm = '' }) => {
                       size="small"
                       variant="contained"
                       onClick={() => {
+                        console.log("Edit clicked for quiz:", quiz._id);
                         onEditClick(quiz._id);
                       }}
                     >

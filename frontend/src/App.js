@@ -5,7 +5,7 @@ import Login from "./components/login";
 import Dashboard from "./components/Dashbord";
 import { UserProvider } from './components/UserContext';
 import ParticipateQuiz from './components/ParticipateQuiz';
-
+import EditQuizForm from './components/EditQuizForm';
 
 
 function App() {
@@ -19,6 +19,7 @@ function App() {
           <Route path="/registre" element={<Register />} />
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/participate/:id" element={<ParticipateQuiz />} />
+          <Route path="/editquiz/:quizId" element={<EditQuizForm />} />
         </Routes>
       </Router>
     </UserProvider>

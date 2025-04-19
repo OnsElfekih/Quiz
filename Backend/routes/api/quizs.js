@@ -148,80 +148,55 @@ router.get('/:id', async (req, res) => {
 // @route PUT api/quiz/edit/:id
 // @desc Mettre à jour un quiz par ID avec recalcul dynamique du score
 // @access Public
-router.put('/edit/:id', async(req, res) => {
-    const { id } = req.params;
-    const { titre, nbQuestions, pic, creator, questions } = req.body;
+router.put('/edit/:id', async (req, res) => {
+  try {
+      console.log("Données reçues pour modification:", req.body);
+      const { id } = req.params;
+      const { titre, nbQuestions, creator, time, score, questions } = req.body;
 
-    try {
-        // 1. Vérifier que le quiz existe
-        const existingQuiz = await Quiz.findById(id);
-        if (!existingQuiz) {
-            return res.status(404).json({ message: 'Quiz non trouvé' });
-        }
+      // Validation (same as create)
+      if (!titre || !nbQuestions || !creator || !time || !Array.isArray(questions)) {
+          return res.status(400).json({ message: "Champs requis manquants ou invalides." });
+      }
 
-        let questionIds = existingQuiz.questions; // Valeur par défaut si pas de nouvelles questions
-        let totalScore = existingQuiz.score;
+      // Find and update quiz
+      const updatedQuiz = await Quiz.findByIdAndUpdate(
+          id,
+          {
+              titre,
+              nbQuestions,
+              time,
+              score,
+              creator,
+              questions
+          },
+          { new: true, runValidators: true }
+      );
 
-        // 2. Si on reçoit de nouvelles questions → les remplacer et recalculer le score
-        if (Array.isArray(questions)) {
-            // Supprimer les anciennes questions associées au quiz
-            await Question.deleteMany({ _id: { $in: existingQuiz.questions } });
+      if (!updatedQuiz) {
+          return res.status(404).json({ message: 'Quiz non trouvé' });
+      }
 
-            // Créer et sauvegarder les nouvelles questions
-            const savedQuestions = await Promise.all(
-                questions.map(async (q) => {
-                    const newQuestion = new Question({
-                        text: q.text,
-                        type: q.type,
-                        temps: q.temps,
-                        score: q.score,
-                        reponses: q.reponses,
-                    });
-                    const saved = await newQuestion.save();
-                    return saved;
-                })
-            );
+      res.status(200).json({ 
+          message: "Quiz mis à jour avec succès", 
+          quiz: updatedQuiz 
+      });
 
-            questionIds = savedQuestions.map(q => q._id);
-            totalScore = savedQuestions.reduce((sum, q) => sum + q.score, 0);
-        }
-
-        // 3. Mettre à jour le quiz
-        const updatedQuiz = await Quiz.findByIdAndUpdate(
-            id,
-            {
-                titre,
-                nbQuestions,
-                pic,
-                creator,
-                score: totalScore,
-                questions: questionIds
-            },
-            { new: true }
-        );
-
-        res.status(200).json({ message: 'Quiz mis à jour avec succès', updatedQuiz });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Erreur lors de la mise à jour du quiz', error });
-    }
+  } catch (error) {
+      console.error("Erreur:", error);
+      if (error.code === 11000 && error.keyPattern?.titre) {
+          return res.status(400).json({ 
+              message: "Ce titre de quiz existe déjà. Choisissez un autre." 
+          });
+      }
+      res.status(500).json({ 
+          message: "Erreur serveur", 
+          error: error.message 
+      });
+  }
 });
 
-// @route DELETE api/quiz/:id
-// @desc Supprimer un quiz par ID
-// @access Public
-router.delete('/delete/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const deletedQuiz = await Quiz.findByIdAndDelete(id);
-        if (!deletedQuiz) {
-            return res.status(404).json({ message: 'Quiz non trouvé' });
-        }
-        res.status(200).json({ message: 'Quiz supprimé avec succès' });
-    } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la suppression du quiz', error });
-    }
-});
+
 router.get('/quizs/createdBy/:id', async (req, res) => {
   try {
     const iduser = req.params.id;
