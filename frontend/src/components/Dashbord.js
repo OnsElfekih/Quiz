@@ -8,6 +8,7 @@ import quizzesIcon from './Icons/quizzes.png';
 import createIcon from './Icons/create.png';
 import addIcon from './Icons/add.png';
 import searchIcon from './Icons/search.png';
+import InputAdornment from '@mui/material/InputAdornment';
 import Cookies from 'js-cookie';
 import { useUser } from './UserContext';
 import QuizForm from './QuizForm';
@@ -79,8 +80,15 @@ const Dashboard = () => {
               borderRadius: 2,
             }}
             InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <img src={searchIcon} alt="search" style={{ height: 20, width: 20 }} />
+                  
+                </InputAdornment>
+              ),
               sx: { paddingLeft: 1 }
             }}
+            
           />
           </div>
           <Button
