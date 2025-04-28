@@ -211,6 +211,22 @@ router.get('/quizs/createdBy/:id', async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la récupération des quiz' });
   }
 });
+// @route DELETE api/quizs/:id
+// @desc Supprimer un quiz par ID
+// @access Public
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+      const deletedQuiz = await Quiz.findByIdAndDelete(id);
+      if (!deletedQuiz) {
+          return res.status(404).json({ message: 'Quiz non trouvé' });
+      }
+      res.status(200).json({ message: 'Quiz supprimé avec succès' });
+  } catch (error) {
+      res.status(500).json({ message: 'Erreur lors de la suppression', error: error.message });
+  }
+});
+
 
 
 

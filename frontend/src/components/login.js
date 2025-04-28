@@ -78,7 +78,7 @@ const Login = () => {
           </div>
           <TextField
             fullWidth
-            label="Username"
+            label="Nom d'utilisateur"
             name="username"
             value={formData.username}
             onChange={handleChange}
@@ -92,7 +92,7 @@ const Login = () => {
           </div>
           <TextField
             fullWidth
-            label="Password"
+            label="Mot de passe"
             type={showPassword ? 'text' : 'password'}
             name="password"
             value={formData.password}

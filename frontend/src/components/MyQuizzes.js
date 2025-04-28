@@ -45,7 +45,7 @@ const MyQuizzes = ({ onEditClick, searchTerm = '' }) => {
 
   const deleteQuiz = async (quizId) => {
     try {
-      await axios.delete(`http://localhost:3003/quizs/delete/${quizId}`);
+      await axios.delete(`http://localhost:3003/quizs/${quizId}`);
       // Remove the quiz from the state after deletion
       setCreatedQuizzes((prevQuizzes) => prevQuizzes.filter(quiz => quiz._id !== quizId));
     } catch (error) {
